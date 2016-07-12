@@ -126,10 +126,6 @@ end
 -- takes one argument - cookie
 -- returns boolean,
 function _M.process(cookie)
-    if ngx.req.get_method() == 'POST' then
-        error({ message = "post_call_s2s" })
-    end
-
     if not cookie then
         px_logger.debug("Risk cookie not present")
         error({ message = "no_cookie" })
@@ -161,6 +157,14 @@ function _M.process(cookie)
     end
 
     local fields = result
+    if fields.v then
+        ngx.ctx.vid = fields.v
+    end
+
+    if ngx.req.get_method() == 'POST' then
+        error({ message = "post_call_s2s" })
+    end
+
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
         px_logger.error("Cookie expired - " .. data)
@@ -175,9 +179,7 @@ function _M.process(cookie)
         if fields.u then
             ngx.ctx.uuid = fields.u
         end
-        if fields.v then
-            ngx.ctx.vid = fields.v
-        end
+
         return false
     end
 
