@@ -110,6 +110,10 @@ local function validate(data)
         request_data = request_data .. data.v
     end
 
+    if data.a then
+        request_data = request_data .. data.a
+    end
+
     request_data = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
     local digest = hmac("sha256", cookie_secret, request_data)
     digest = to_hex(digest)
