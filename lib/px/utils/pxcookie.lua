@@ -126,10 +126,7 @@ end
 -- takes one argument - cookie
 -- returns boolean,
 function _M.process(cookie)
-    ngx.log(ngx.ERR, ngx.req.get_method())
-    ngx.log(ngx.ERR, ngx.var.uri)
-
-    if ngx.req.get_method() == 'POST' and ngx.var.uri == '/login' then
+    if ngx.req.get_method() == 'POST' then
         error({ message = "post_call_s2s" })
     end
 
