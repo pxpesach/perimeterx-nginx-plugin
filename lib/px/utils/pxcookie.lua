@@ -126,6 +126,13 @@ end
 -- takes one argument - cookie
 -- returns boolean,
 function _M.process(cookie)
+    ngx.log(ngx.ERR, ngx.req.get_method())
+    ngx.log(ngx.ERR, ngx.req.uri)
+
+    if ngx.req.get_method() == 'POST' and ngx.var.uri == '/login' then
+        error({ message = "post_call_s2s" })
+    end
+
     if not cookie then
         px_logger.debug("Risk cookie not present")
         error({ message = "no_cookie" })
