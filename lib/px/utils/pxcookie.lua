@@ -127,6 +127,10 @@ end
 -- returns boolean,
 function _M.process(cookie)
     if not cookie then
+        if ngx.req.get_method() == 'POST' then
+            ngx.ctx.block_reason = 'post_with_no_cookie'
+            return false
+        end
         px_logger.debug("Risk cookie not present")
         error({ message = "no_cookie" })
     end
@@ -161,10 +165,6 @@ function _M.process(cookie)
         ngx.ctx.vid = fields.v
     end
 
-    if ngx.req.get_method() == 'POST' then
-        error({ message = "post_call_s2s" })
-    end
-
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
         px_logger.error("Cookie expired - " .. data)
@@ -179,7 +179,7 @@ function _M.process(cookie)
         if fields.u then
             ngx.ctx.uuid = fields.u
         end
-
+        ngx.ctx.block_reason = 'cookie_high_score'
         return false
     end
 
@@ -188,6 +188,10 @@ function _M.process(cookie)
     if not success or result == false then
         px_logger.error("Could not validate cookie signature - " .. data)
         error({ message = "invalid_cookie" })
+    end
+
+    if ngx.req.get_method() == 'POST' then
+        error({ message = "method_post_call_s2s" })
     end
 
     return true

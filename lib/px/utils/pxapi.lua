@@ -31,6 +31,10 @@ function _M.new_request_object(call_reason)
     risk.additional.s2s_call_reason = call_reason
     risk.additional.http_version = ngx.req.http_version()
 
+    if ngx.ctx.vid then
+        risk.vid = ngx.ctx.vid
+    end
+
     return risk
 end
 

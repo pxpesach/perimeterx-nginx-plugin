@@ -96,8 +96,8 @@ local success, result = pcall(px_cookie.process, _px)
 if success then
     -- score crossed threshold
     if result == false then
-        return px_block.block('cookie_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
-            -- score did not cross the blocking threshold
+        return px_block.block(ngx.ctx.block_reason, ngx.ctx.uuid, ngx.ctx.block_score)
+        -- score did not cross the blocking threshold
     else
         px_client.send_to_perimeterx("page_requested")
         return true
